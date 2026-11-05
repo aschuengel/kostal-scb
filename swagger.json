@@ -1,0 +1,1265 @@
+{
+  "swagger": "2.0",
+  "basePath": "\/api\/v1",
+  "paths": {
+    "\/auth\/create_session": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#\/definitions\/AuthCreateSessionResponse" }
+          },
+          "400": { "$ref": "#\/responses\/AuthenticationError" }
+        },
+        "summary": "Creates a session for regular access to the API",
+        "operationId": "post_auth_create_session",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": { "$ref": "#\/definitions\/AuthCreateSessionRequest" }
+          }
+        ],
+        "security": [],
+        "tags": ["auth"]
+      }
+    },
+    "\/auth\/finish": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#\/definitions\/AuthServerFinal" }
+          },
+          "400": { "$ref": "#\/responses\/AuthenticationError" }
+        },
+        "summary": "Finishes the authentication process",
+        "operationId": "post_auth_finish",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": { "$ref": "#\/definitions\/AuthClientFinal" }
+          }
+        ],
+        "security": [],
+        "tags": ["auth"]
+      }
+    },
+    "\/auth\/logout": {
+      "post": {
+        "responses": { "200": { "description": "Success" } },
+        "summary": "Deletes the current session, the session id is no longer valid",
+        "operationId": "post_logout",
+        "tags": ["auth"]
+      }
+    },
+    "\/auth\/me": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#\/definitions\/User" }
+          }
+        },
+        "summary": "Returns information about the user",
+        "operationId": "get_user",
+        "tags": ["auth"]
+      }
+    },
+    "\/auth\/set_password": {
+      "post": {
+        "responses": {
+          "200": { "description": "Success" },
+          "400": { "$ref": "#\/responses\/AuthenticationError" }
+        },
+        "summary": "Sets a new password after successful authentication with master-key or user-password",
+        "operationId": "post_auth_set_password",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": { "$ref": "#\/definitions\/AuthSetPasswordRequest" }
+          }
+        ],
+        "security": [],
+        "tags": ["auth"]
+      }
+    },
+    "\/auth\/start": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#\/definitions\/AuthServerFirst" }
+          },
+          "400": { "$ref": "#\/responses\/UserNotFoundError" },
+          "403": { "$ref": "#\/responses\/UserIsLockedError" },
+          "503": { "$ref": "#\/responses\/DBusException" }
+        },
+        "summary": "Starts the authentication process",
+        "operationId": "post_auth_start",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": { "$ref": "#\/definitions\/AuthClientFirst" }
+          }
+        ],
+        "security": [],
+        "tags": ["auth"]
+      }
+    },
+    "\/events\/acknowledge": {
+      "put": {
+        "responses": { "200": { "description": "Success" } },
+        "summary": "acknowledgement of events",
+        "operationId": "put_acknowledge",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": { "$ref": "#\/definitions\/EventAck" }
+          }
+        ],
+        "tags": ["events"]
+      }
+    },
+    "\/events\/latest": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/Event" }
+            }
+          }
+        },
+        "summary": "Get the latest events with localized descriptions",
+        "operationId": "post_latest",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": { "$ref": "#\/definitions\/EventsQuery" }
+          },
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": ["events"]
+      },
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/Event" }
+            }
+          }
+        },
+        "summary": "Get the latest events",
+        "operationId": "get_latest",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": ["events"]
+      }
+    },
+    "\/firmwareupdate\/status": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#\/definitions\/FirmwareUpdateProgress" }
+          }
+        },
+        "summary": "Returns the status and progress of the current or last update process",
+        "operationId": "get_update_status",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": ["firmwareupdate"]
+      }
+    },
+    "\/info\/version": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#\/definitions\/Version" }
+          }
+        },
+        "summary": "Returns information about the API",
+        "operationId": "get_info",
+        "security": [],
+        "tags": ["info"]
+      }
+    },
+    "\/logdata\/dbdownload": {
+      "get": {
+        "responses": { "200": { "description": "Success" } },
+        "summary": "download logdata db as sql file, only accessable with advanced permissions",
+        "operationId": "get_logdata_db_download",
+        "tags": ["logdata"]
+      }
+    },
+    "\/logdata\/download": {
+      "post": {
+        "responses": { "200": { "description": "Success" } },
+        "summary": "Download logdata as tab-separated file",
+        "operationId": "post_logdata_download",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": { "$ref": "#\/definitions\/DownloadRequest" }
+          }
+        ],
+        "tags": ["logdata"]
+      }
+    },
+    "\/modules": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/Module" }
+            }
+          },
+          "503": { "$ref": "#\/responses\/DBusException" }
+        },
+        "summary": "Returns list of all available modules (providing process data or settings)",
+        "operationId": "get_module_list",
+        "tags": ["modules"]
+      }
+    },
+    "\/processdata": {
+      "post": {
+        "responses": {
+          "404": { "description": "Module not found" },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/ProcessDataUpdate" }
+            }
+          },
+          "503": { "$ref": "#\/responses\/DBusException" }
+        },
+        "summary": "Returns a customized list of process-data values for one or more modules",
+        "operationId": "post_process_data",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/ProcessDataQuery" }
+            }
+          }
+        ],
+        "tags": ["processdata"]
+      },
+      "get": {
+        "responses": {
+          "404": { "description": "Module not found" },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/ProcessDataQuery" }
+            }
+          },
+          "503": { "$ref": "#\/responses\/DBusException" }
+        },
+        "summary": "Returns list of all modules with a list of available process-data identifiers",
+        "operationId": "get_process_data",
+        "tags": ["processdata"]
+      }
+    },
+    "\/processdata\/{moduleid}": {
+      "parameters": [
+        {
+          "in": "path",
+          "description": "The module identifier",
+          "name": "moduleid",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "404": { "description": "Module not found" },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/ProcessDataUpdate" }
+            }
+          },
+          "503": { "$ref": "#\/responses\/DBusException" }
+        },
+        "summary": "Returns list of all available process-data identifiers of a module",
+        "operationId": "get_module_process_data_list",
+        "tags": ["processdata"]
+      }
+    },
+    "\/processdata\/{moduleid}\/{processdataids}": {
+      "parameters": [
+        {
+          "in": "path",
+          "description": "A comma-separated list of process-data identifiers",
+          "name": "processdataids",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "path",
+          "description": "The module identifier",
+          "name": "moduleid",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "404": { "description": "Module or process-data not found" },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/ProcessDataUpdate" }
+            }
+          },
+          "503": { "$ref": "#\/responses\/DBusException" }
+        },
+        "summary": "Returns specified process-data values of a module",
+        "operationId": "get_module_process_data_list_filtered",
+        "tags": ["processdata"]
+      }
+    },
+    "\/processdata\/{moduleid}\/{processdataid}": {
+      "parameters": [
+        {
+          "in": "path",
+          "description": "The process-data identifier",
+          "name": "processdataid",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "path",
+          "description": "The module identifier",
+          "name": "moduleid",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "404": { "description": "Module or process-data not found" },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/ProcessDataUpdate" }
+            }
+          },
+          "503": { "$ref": "#\/responses\/DBusException" }
+        },
+        "summary": "Returns specified process-data value of a module",
+        "operationId": "get_module_process_data",
+        "tags": ["processdata"]
+      }
+    },
+    "\/settings": {
+      "put": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/SettingsUpdate" }
+            }
+          },
+          "404": { "$ref": "#\/responses\/ModuleOrSettingNotFoundError" },
+          "503": { "$ref": "#\/responses\/DBusException" }
+        },
+        "summary": "Writes a list of settings for one or more modules",
+        "operationId": "put_settings",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/SettingsUpdate" }
+            }
+          },
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": ["settings"]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/SettingsUpdate" }
+            }
+          },
+          "404": { "$ref": "#\/responses\/ModuleOrSettingNotFoundError" },
+          "503": { "$ref": "#\/responses\/DBusException" }
+        },
+        "summary": "Returns a customized list of settings for one or more modules",
+        "operationId": "post_settings",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/SettingsQuery" }
+            }
+          },
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": ["settings"]
+      },
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/SettingsMetadata" }
+            }
+          },
+          "503": { "$ref": "#\/responses\/DBusException" }
+        },
+        "summary": "Returns list of all modules with a list of available settings identifiers",
+        "operationId": "get_settings",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": ["settings"]
+      }
+    },
+    "\/settings\/{moduleid}": {
+      "parameters": [
+        {
+          "in": "path",
+          "description": "The module identifier",
+          "name": "moduleid",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/Setting" }
+            }
+          },
+          "404": { "$ref": "#\/responses\/ModuleOrSettingNotFoundError" },
+          "503": { "$ref": "#\/responses\/DBusException" }
+        },
+        "summary": "Returns list of all available settings of a module",
+        "operationId": "get_module_setting_list",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": ["settings"]
+      }
+    },
+    "\/settings\/{moduleid}\/{settingids}": {
+      "parameters": [
+        {
+          "in": "path",
+          "description": "A comma-separated list of settings identifiers",
+          "name": "settingids",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "path",
+          "description": "The module identifier",
+          "name": "moduleid",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/Setting" }
+            }
+          },
+          "404": { "$ref": "#\/responses\/ModuleOrSettingNotFoundError" },
+          "503": { "$ref": "#\/responses\/DBusException" }
+        },
+        "summary": "Returns specified settings of a module",
+        "operationId": "get_module_setting_list_filtered",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": ["settings"]
+      }
+    },
+    "\/settings\/{moduleid}\/{settingid}": {
+      "parameters": [
+        {
+          "in": "path",
+          "description": "The settings identifier",
+          "name": "settingid",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "path",
+          "description": "The module identifier",
+          "name": "moduleid",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#\/definitions\/Setting" }
+            }
+          },
+          "404": { "$ref": "#\/responses\/ModuleOrSettingNotFoundError" },
+          "503": { "$ref": "#\/responses\/DBusException" }
+        },
+        "summary": "Returns specified setting of a module",
+        "operationId": "get_module_setting",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": ["settings"]
+      }
+    },
+    "\/system\/factorysettings": {
+      "post": {
+        "responses": { "200": { "description": "Success" } },
+        "summary": "Restore to factory settings",
+        "operationId": "post_factory_settings",
+        "tags": ["system"]
+      }
+    },
+    "\/system\/reboot": {
+      "post": {
+        "responses": { "200": { "description": "Success" } },
+        "summary": "Reboot",
+        "operationId": "post_reboot",
+        "tags": ["system"]
+      }
+    },
+    "\/update\/status": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#\/definitions\/Status" }
+          }
+        },
+        "summary": "Returns the status and progress of the current or last update process",
+        "operationId": "get_update_status",
+        "parameters": [
+          {
+            "name": "X-Fields",
+            "in": "header",
+            "type": "string",
+            "format": "mask",
+            "description": "An optional fields mask"
+          }
+        ],
+        "tags": ["update"]
+      }
+    },
+    "\/update\/upload": {
+      "put": {
+        "responses": { "200": { "description": "Success" } },
+        "summary": "Upload a software update image",
+        "operationId": "put_update_upload",
+        "tags": ["update"]
+      }
+    },
+    "\/update\/upload-firmware": {
+      "put": {
+        "responses": { "200": { "description": "Success" } },
+        "summary": "Upload a firmware update file",
+        "operationId": "put_update_upload_firmware",
+        "tags": ["update"]
+      }
+    },
+    "\/updateservice\/activateupdate": {
+      "post": {
+        "responses": { "503": { "$ref": "#\/responses\/DBusException" } },
+        "summary": "Starts UI update from the given swu-file",
+        "description": "Returns 0 if success, otherwise error code",
+        "operationId": "post_activate_update",
+        "tags": ["updateservice"]
+      }
+    },
+    "\/updateservice\/checknewupdates": {
+      "post": {
+        "responses": { "503": { "$ref": "#\/responses\/DBusException" } },
+        "summary": "Starts search for new UI updates",
+        "description": "Returns 0 if success, otherwise error code",
+        "operationId": "post_check_new_updates",
+        "tags": ["updateservice"]
+      }
+    },
+    "\/updateservice\/getstatus": {
+      "get": {
+        "responses": { "503": { "$ref": "#\/responses\/DBusException" } },
+        "summary": "Return the current status consisting of: version, status and progress",
+        "description": "Returns 0 if success, otherwise error code",
+        "operationId": "get_get_status",
+        "tags": ["updateservice"]
+      }
+    },
+    "\/updateservice\/install": {
+      "post": {
+        "responses": { "503": { "$ref": "#\/responses\/DBusException" } },
+        "summary": "Starts UI update from the given swu-file",
+        "description": "Returns 0 if success, otherwise error code",
+        "operationId": "post_install",
+        "tags": ["updateservice"]
+      }
+    },
+    "\/updateservice\/upload-and-install": {
+      "put": {
+        "responses": { "503": { "$ref": "#\/responses\/DBusException" } },
+        "summary": "Upload and install software update image",
+        "description": "Returns 0 if success, otherwise error code",
+        "operationId": "put_upload_and_install",
+        "tags": ["updateservice"]
+      }
+    }
+  },
+  "info": {
+    "title": "PIKO IQ \/ PLENTICORE plus API",
+    "version": "0.2.0",
+    "description": "REST-based API for PIKO IQ and PLENTICORE plus inverters"
+  },
+  "produces": ["application\/json"],
+  "consumes": ["application\/json"],
+  "securityDefinitions": {
+    "apikey": { "type": "apiKey", "in": "header", "name": "Authorization" }
+  },
+  "tags": [
+    { "name": "auth", "description": "Authentication" },
+    { "name": "events", "description": "Events" },
+    { "name": "firmwareupdate", "description": "Firmware Update" },
+    { "name": "info", "description": "Information" },
+    { "name": "logdata", "description": "Logdata" },
+    { "name": "modules", "description": "Modules" },
+    { "name": "processdata", "description": "Process Data" },
+    { "name": "settings", "description": "Settings" },
+    { "name": "system", "description": "System" },
+    { "name": "update", "description": "Update" },
+    { "name": "updateservice", "description": "Update Service" }
+  ],
+  "definitions": {
+    "Error": {
+      "required": ["message"],
+      "properties": { "message": { "type": "string" } },
+      "type": "object"
+    },
+    "User": {
+      "required": [
+        "active",
+        "anonymous",
+        "authenticated",
+        "locked",
+        "permissions",
+        "role"
+      ],
+      "properties": {
+        "role": { "type": "string", "description": "" },
+        "permissions": { "type": "array", "items": { "type": "string" } },
+        "active": { "type": "boolean" },
+        "authenticated": { "type": "boolean" },
+        "anonymous": { "type": "boolean" },
+        "locked": {
+          "type": "boolean",
+          "description": "User-account is locked. Password-reset is required."
+        }
+      },
+      "type": "object"
+    },
+    "AuthClientFirst": {
+      "required": ["nonce", "username"],
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Type of login: \"user\" or \"master\""
+        },
+        "nonce": {
+          "type": "string",
+          "description": "Base64-coded random nonce of length 12 bytes"
+        }
+      },
+      "type": "object"
+    },
+    "AuthServerFirst": {
+      "required": ["nonce", "rounds", "salt", "transactionId"],
+      "properties": {
+        "transactionId": {
+          "type": "string",
+          "description": "ID of authentication transaction"
+        },
+        "nonce": {
+          "type": "string",
+          "description": "Base64-coded random nonce of server"
+        },
+        "salt": { "type": "string", "description": "Salt used for PBKDF2" },
+        "rounds": { "type": "integer", "description": "Rounds used for PBKDF2" }
+      },
+      "type": "object"
+    },
+    "AuthClientFinal": {
+      "required": ["proof", "transactionId"],
+      "properties": {
+        "transactionId": {
+          "type": "string",
+          "description": "ID of authentication transaction"
+        },
+        "proof": {
+          "type": "string",
+          "description": "Base64-coded client proof"
+        }
+      },
+      "type": "object"
+    },
+    "AuthServerFinal": {
+      "required": ["signature", "token"],
+      "properties": {
+        "signature": {
+          "type": "string",
+          "description": "Base64-coded server signature"
+        },
+        "token": {
+          "type": "string",
+          "description": "One-time usable token to create a session or set the user-password"
+        }
+      },
+      "type": "object"
+    },
+    "AuthCreateSessionRequest": {
+      "required": ["iv", "payload", "tag", "transactionId"],
+      "properties": {
+        "transactionId": {
+          "type": "string",
+          "description": "ID of authentication transaction"
+        },
+        "iv": { "type": "string", "description": "AES initialization vector" },
+        "tag": { "type": "string", "description": "AES GCM tag" },
+        "payload": {
+          "type": "string",
+          "description": "Only the token or token and service code (separated by colon). Encrypted with AES using the protocol key."
+        }
+      },
+      "type": "object"
+    },
+    "AuthCreateSessionResponse": {
+      "required": ["sessionId"],
+      "properties": { "sessionId": { "type": "string" } },
+      "type": "object"
+    },
+    "AuthSetPasswordRequest": {
+      "required": ["iv", "payload", "tag", "transactionId"],
+      "properties": {
+        "transactionId": {
+          "type": "string",
+          "description": "ID of authentication transaction"
+        },
+        "iv": { "type": "string", "description": "AES initialization vector" },
+        "tag": { "type": "string", "description": "AES GCM tag" },
+        "payload": {
+          "type": "string",
+          "description": "Token and new password (separated by colon). Encrypted with AES using the protocol key."
+        }
+      },
+      "type": "object"
+    },
+    "EventsQuery": {
+      "required": ["language"],
+      "properties": {
+        "language": {
+          "type": "string",
+          "description": "The language identifier, e.g. de-DE",
+          "default": "en-gb",
+          "example": "de-de",
+          "enum": [
+            "de-de",
+            "en-gb",
+            "es-es",
+            "fr-fr",
+            "it-it",
+            "nl-nl",
+            "pl-pl",
+            "pt-pt",
+            "cs-cz",
+            "el-gr",
+            "da-dk",
+            "et-ee",
+            "fi-fi",
+            "sv-se"
+          ]
+        },
+        "max": {
+          "type": "integer",
+          "description": "Max. number of events to return, default is 10",
+          "default": 10
+        }
+      },
+      "type": "object"
+    },
+    "Event": {
+      "required": [
+        "acknowledge",
+        "category",
+        "code",
+        "description",
+        "group",
+        "is_active",
+        "start_time"
+      ],
+      "properties": {
+        "code": { "type": "integer", "description": "The event code" },
+        "start_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Start time of the event"
+        },
+        "end_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "End time of the event (null if event is still active)"
+        },
+        "is_active": {
+          "type": "boolean",
+          "description": "True if event is still active"
+        },
+        "category": {
+          "type": "string",
+          "description": "Category of the event",
+          "example": "info",
+          "enum": ["info", "warning", "error"]
+        },
+        "group": { "type": "string", "description": "Group of the event" },
+        "description": {
+          "type": "string",
+          "description": "Short description of the event"
+        },
+        "long_description": {
+          "type": "string",
+          "description": "Long description of the event"
+        },
+        "acknowledge": {
+          "type": "boolean",
+          "description": "True if event must be acknowledged"
+        }
+      },
+      "type": "object"
+    },
+    "EventAck": {
+      "required": ["code"],
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "Event-code of the event that is to acknowledge",
+          "default": 0
+        }
+      },
+      "type": "object"
+    },
+    "FirmwareUpdateProgress": {
+      "required": ["current_percent", "status", "target"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the current update process",
+          "example": "idle",
+          "enum": [
+            "idle",
+            "controllerprecheck",
+            "preprocessing",
+            "controllerstartbootloader",
+            "updateflasherase",
+            "updatedownloadprogram",
+            "updateverify",
+            "controllerstartapplication",
+            "postprocessing",
+            "successful",
+            "error"
+          ]
+        },
+        "target": {
+          "type": "string",
+          "description": "Target of the current update"
+        },
+        "current_percent": {
+          "type": "integer",
+          "description": "Progress of update process"
+        }
+      },
+      "type": "object"
+    },
+    "Version": {
+      "required": ["api_version", "hostname", "name", "sw_version"],
+      "properties": {
+        "name": { "type": "string", "description": "The API name" },
+        "api_version": { "type": "string", "description": "The API version" },
+        "sw_version": { "type": "string", "description": "The SW version" },
+        "hostname": { "type": "string", "description": "The hostname" }
+      },
+      "type": "object"
+    },
+    "DownloadRequest": {
+      "properties": {
+        "begin": {
+          "type": "string",
+          "format": "date",
+          "description": "Begin date, default is oldest available"
+        },
+        "end": {
+          "type": "string",
+          "format": "date",
+          "description": "End date (including), default is the current day"
+        }
+      },
+      "type": "object"
+    },
+    "Module": {
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "type": "string", "description": "The module identifier" },
+        "type": { "type": "string", "description": "The module type" }
+      },
+      "type": "object"
+    },
+    "ProcessDataQuery": {
+      "required": ["moduleid", "processdataids"],
+      "properties": {
+        "moduleid": {
+          "type": "string",
+          "description": "The module identifier"
+        },
+        "processdataids": {
+          "type": "array",
+          "description": "The list of requested process-data identifiers",
+          "items": { "type": "string" }
+        }
+      },
+      "type": "object"
+    },
+    "ProcessDataUpdate": {
+      "required": ["moduleid", "processdata"],
+      "properties": {
+        "moduleid": {
+          "type": "string",
+          "description": "The module identifier"
+        },
+        "processdata": {
+          "type": "array",
+          "description": "The list of settings to update",
+          "items": { "$ref": "#\/definitions\/ProcessData" }
+        }
+      },
+      "type": "object"
+    },
+    "ProcessData": {
+      "required": ["id", "value"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The process-data identifier"
+        },
+        "unit": { "type": "string", "description": "The process-data unit" },
+        "value": { "type": "number" }
+      },
+      "type": "object"
+    },
+    "SettingsUpdate": {
+      "required": ["moduleid", "settings"],
+      "properties": {
+        "moduleid": {
+          "type": "string",
+          "description": "The module identifier"
+        },
+        "settings": {
+          "type": "array",
+          "description": "The list of settings to update",
+          "items": { "$ref": "#\/definitions\/Setting" }
+        }
+      },
+      "type": "object"
+    },
+    "Setting": {
+      "required": ["id", "value"],
+      "properties": {
+        "id": { "type": "string", "description": "The settings identifier" },
+        "value": { "type": "string" }
+      },
+      "type": "object"
+    },
+    "SettingsQuery": {
+      "required": ["moduleid", "settingids"],
+      "properties": {
+        "moduleid": {
+          "type": "string",
+          "description": "The module identifier"
+        },
+        "settingids": {
+          "type": "array",
+          "description": "The list of requested settings identifiers",
+          "items": { "type": "string" }
+        }
+      },
+      "type": "object"
+    },
+    "SettingsMetadata": {
+      "required": ["moduleid", "settings"],
+      "properties": {
+        "moduleid": {
+          "type": "string",
+          "description": "The module identifier"
+        },
+        "settings": {
+          "type": "array",
+          "description": "The list of requested settings identifiers including metadata",
+          "items": { "$ref": "#\/definitions\/SettingMetadata" }
+        }
+      },
+      "type": "object"
+    },
+    "SettingMetadata": {
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string", "description": "The settings identifier" },
+        "unit": { "type": "string", "description": "The settings unit" },
+        "type": { "type": "object", "description": "The settings type" },
+        "min": { "type": "string", "description": "The settings min value" },
+        "max": { "type": "string", "description": "The settings max value" },
+        "default": {
+          "type": "string",
+          "description": "The settings default value"
+        },
+        "access": { "type": "object", "description": "Access to the setting" }
+      },
+      "type": "object"
+    },
+    "Status": {
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "description": "Status of the current\/last update",
+          "allOf": [{ "$ref": "#\/definitions\/UpdateStatus" }]
+        },
+        "progress": {
+          "description": "Progress of current update process",
+          "allOf": [{ "$ref": "#\/definitions\/UpdateProgress" }]
+        }
+      },
+      "type": "object"
+    },
+    "UpdateStatus": {
+      "required": ["current_status", "error", "last_status"],
+      "properties": {
+        "current_status": {
+          "type": "string",
+          "description": "Status of the current update process",
+          "example": "idle",
+          "enum": [
+            "idle",
+            "start",
+            "run",
+            "success",
+            "failure",
+            "download",
+            "done"
+          ]
+        },
+        "last_status": {
+          "type": "string",
+          "description": "Status of the previous update process",
+          "example": "idle",
+          "enum": [
+            "idle",
+            "start",
+            "run",
+            "success",
+            "failure",
+            "download",
+            "done"
+          ]
+        },
+        "error": { "type": "integer", "description": "Error code" }
+      },
+      "type": "object"
+    },
+    "UpdateProgress": {
+      "required": [
+        "current_percent",
+        "current_step",
+        "download_percent",
+        "source",
+        "status",
+        "steps"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the current update process",
+          "example": "idle",
+          "enum": [
+            "idle",
+            "start",
+            "run",
+            "success",
+            "failure",
+            "download",
+            "done"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of the current update",
+          "example": "local",
+          "enum": ["local", "automatic", "download"]
+        },
+        "download_percent": {
+          "type": "integer",
+          "description": "Progress of download process"
+        },
+        "steps": {
+          "type": "integer",
+          "description": "Number of steps of update process"
+        },
+        "current_step": {
+          "type": "integer",
+          "description": "Current step of update process"
+        },
+        "current_percent": {
+          "type": "integer",
+          "description": "Progress of current step of update process"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "responses": {
+    "ParseError": { "description": "When a mask can't be parsed" },
+    "MaskError": { "description": "When any error occurs on mask" },
+    "DBusException": {
+      "description": "Internal communication error",
+      "schema": { "$ref": "#\/definitions\/Error" }
+    },
+    "UserNotFoundError": {
+      "description": "Invalid user",
+      "schema": { "$ref": "#\/definitions\/Error" }
+    },
+    "UserIsLockedError": {
+      "description": "User is locked",
+      "schema": { "$ref": "#\/definitions\/Error" }
+    },
+    "InvalidAuthSessionError": {
+      "description": "Invalid authentication transaction",
+      "schema": { "$ref": "#\/definitions\/Error" }
+    },
+    "AuthenticationError": {
+      "description": "Authentication failed",
+      "schema": { "$ref": "#\/definitions\/Error" }
+    },
+    "ModuleOrSettingNotFoundError": {
+      "description": "Module or setting not found",
+      "schema": { "$ref": "#\/definitions\/Error" }
+    },
+    "NotAuthorizedError": {
+      "description": "Not authorized",
+      "schema": { "$ref": "#\/definitions\/Error" }
+    }
+  }
+}

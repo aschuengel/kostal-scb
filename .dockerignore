@@ -1,0 +1,10 @@
+.git
+.gitignore
+.venv
+__pycache__
+*.pyc
+.env
+.python-version
+README.md
+swagger.json
+AGENTS.md

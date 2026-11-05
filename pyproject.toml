@@ -1,0 +1,14 @@
+[project]
+name = "kostal-scb"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.15"
+dependencies = [
+    "cryptography>=46.0.3",
+    "fastapi>=0.121.1",
+    "pydantic>=2.12.3",
+    "python-dotenv>=1.2.4",
+    "requests>=2.32.5",
+    "uvicorn>=0.38.0",
+]
